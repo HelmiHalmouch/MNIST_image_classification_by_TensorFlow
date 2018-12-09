@@ -81,6 +81,36 @@ init= tf.global_variables_initializer()
 # save the model 
 saver = tf.train.Saver()
 
+# Executing the computational graph 
+
+with tf.Session() as sess :
+	sess.run(init)
+	for i in range(epochs):
+
+		# split the data into train and validation set 
+		mini_batch_x, mini_batch_y = mnist_data.train.next_batch(batch_size)
+		# print(mini_batch_x[0:1,:].shape)
+		mini_batch_val_x, mini_batch_val_y = mnist_data.validation.next_batch(batch_size)
+
+		sess.run(optimizer, feed_dict={X:mini_batch_x,Y:mini_batch_y,keep_prob:1})
+
+		if i%100 == 0:
+
+			mini_batch_loss, mini_batch_accuracy = sess.run([computed_loss, nn_accuracy], feed_dict = {X:mini_batch_x, Y:mini_batch_y, keep_prob:1})
+			mini_batch_val_loss, mini_batch_val_accuracy = sess.run([computed_loss, nn_accuracy], feed_dict = {X:mini_batch_val_x, Y:mini_batch_val_y, keep_prob:1})
+
+			print("Iteration:{0}, Train_loss = {1}, Train_Accuracy {2}, Val_loss {3} Val_accuracy {4}".format(i, mini_batch_val_loss, mini_batch_val_accuracy, mini_batch_val_loss, mini_batch_val_accuracy))
+
+	print("Optimization finished")
+
+	test_accuracy = sess.run(nn_accuracy, feed_dict={X:mnist_data.test.images, Y:mnist_data.test.labels, keep_prob:1.0})
+	print("Testing accuracy is {0}".format(test_accuracy))
+
+	save_path = saver.save(sess, 'MyTrainedModel.ckpt')
+
+
+
+
 print('OK')
 
 
