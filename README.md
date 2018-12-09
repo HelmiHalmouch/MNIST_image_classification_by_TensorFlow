@@ -8,9 +8,13 @@ Matplotlib<br/>
 
 *---------------Run------------*<br/>
 1- train the model 
+then 
+2- test the model on a input image 
+
+using the following command 
 
 python main.py
 
-2- test the model on a input image 
 
-python test_model.py
+
+

@@ -8,6 +8,9 @@ Author : GHNAMI Helmi
 
 # import the required lib and package 
 
+
+import cv2
+import matplotlib.pyplot as plt
 import tensorflow as tf 
 import numpy as np 
 import sys, os 
@@ -30,7 +33,7 @@ n_output = 10    #output layer with 10 class (0-9 digit )
 # Define thehyperparameters fo the training using tensorflow 
 
 learning_rate = 1e-4
-epochs = 10000 #1
+epochs = 30000 #1
 batch_size = 128 
 keep_prob = tf.placeholder(tf.float32)
 
@@ -98,7 +101,8 @@ with tf.Session() as sess :
 
 		sess.run(optimizer, feed_dict={X:mini_batch_x,Y:mini_batch_y,keep_prob:1})
 
-		if i%100 == 0:
+		# 50 is the etep of iteration from 0 to number of epochs
+		if i%50 == 0:
 
 			mini_batch_loss, mini_batch_accuracy = sess.run([computed_loss, nn_accuracy], feed_dict = {X:mini_batch_x, Y:mini_batch_y, keep_prob:1})
 			mini_batch_val_loss, mini_batch_val_accuracy = sess.run([computed_loss, nn_accuracy], feed_dict = {X:mini_batch_val_x, Y:mini_batch_val_y, keep_prob:1})
@@ -115,8 +119,36 @@ with tf.Session() as sess :
 	print("Model saved in path: %s" % save_path)
 
 
-print('OK')
+'''
+Here is the script to test the model on a image 
 
+'''
+
+#read inpt image 
+
+img = cv2.imread('input_test_image/number.jpg')
+gray_image= cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+rescaled_image = cv2.resize(gray_image, (28,28))
+
+'''plt.imshow(rescaled_image, cmap ='gray')
+plt.show()'''
+
+rescaled_image.shape
+
+#normalization 
+dum = rescaled_image.reshape(1,-1)/255  
+dum.shape
+
+# apply the trained tf model 
+with tf.Session() as sess:
+	#load the trained tf model
+	saver.restore(sess, "./output_trained_model/tfmodel.ckpt")
+
+	Z = output_layer.eval(feed_dict = {X:dum, keep_prob:1.0})
+	y_pred = np.argmax(Z, axis = 1)
+
+	print("Prediction for test image is {0}".format(y_pred))
 
 
 '''# run the algorithme
