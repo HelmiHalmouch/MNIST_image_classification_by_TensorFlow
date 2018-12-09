@@ -1,7 +1,7 @@
 '''
 Please see the readme file 
 
-Here is the main code 
+Here is the main code : the architechture of the neural network, the trainerd model using Tensorflow 
 
 Author : GHNAMI Helmi 
 '''
@@ -11,6 +11,11 @@ import cv2
 import matplotlib.pyplot as plt
 import tensorflow as tf 
 import numpy as np 
+import sys, os 
+
+# create a folder to save the trained model 
+if not os.path.exists('output_trained_model'):
+	os.makedirs('output_trained_model')
 
 # import the MNIST dataset 
 from tensorflow.examples.tutorials.mnist import input_data
@@ -26,7 +31,7 @@ n_output = 10    #output layer with 10 class (0-9 digit )
 # Define thehyperparameters fo the training using tensorflow 
 
 learning_rate = 1e-4
-epochs = 3000
+epochs = 2 #3000
 batch_size = 128 
 keep_prob = tf.placeholder(tf.float32)
 
@@ -45,29 +50,29 @@ Y = tf.placeholder(tf.float32,[None, n_output])
 #weight definition 
 nn_weight = {"W1":tf.Variable(tf.truncated_normal([n_input, n_hidden_1],stddev = 0.1)),
 			 "W2":tf.Variable(tf.truncated_normal([n_hidden_1, n_hidden_2],stddev = 0.1)),
-			 "W3":tf.Variable(tf.truncated_normal([n_hidden_2, n_hidden_3],stddev = 0.1))
+			 "W3":tf.Variable(tf.truncated_normal([n_hidden_2, n_hidden_3],stddev = 0.1)),
 			 "Wout":tf.Variable(tf.truncated_normal([n_hidden_3, n_output],stddev = 0.1))
 			 }
 # bias definition 
 nn_bias =   {"B1":tf.Variable(tf.truncated_normal([n_hidden_1])),
 			 "B2":tf.Variable(tf.truncated_normal([n_hidden_2])),
-			 "B3":tf.Variable(tf.truncated_normal([n_hidden_3]))
+			 "B3":tf.Variable(tf.truncated_normal([n_hidden_3])),
 			 "B4":tf.Variable(tf.truncated_normal([n_output]))
 			 }
 
 # Create the Neural Network model 
 
-nn_layer_1 = tf.add(tf.matmul(X, nn_weight["W1"], nn_bias["B1"]))
-nn_layer_2 = tf.add(tf.matmul(nn_layer_1, nn_weight["W2"], nn_bias["B2"]))
-nn_layer_3 = tf.add(tf.matmul(nn_layer_2, nn_weight["W3"], nn_bias["B3"]))
+nn_layer_1 = tf.add(tf.matmul(X, nn_weight["W1"]), nn_bias["B1"])
+nn_layer_2 = tf.add(tf.matmul(nn_layer_1, nn_weight["W2"]), nn_bias["B2"])
+nn_layer_3 = tf.add(tf.matmul(nn_layer_2, nn_weight["W3"]), nn_bias["B3"])
 layer_drop = tf.nn.dropout(nn_layer_3, keep_prob)
-output_layer = tf.add(tf.matmul(layer_drop, nn_weight["Wout"], nn_bias["B4"]))
+output_layer = tf.add(tf.matmul(layer_drop, nn_weight["Wout"]), nn_bias["B4"])
 
 # Define the loss 
 computed_loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(logits=output_layer, labels = Y))
 
 # Define the optimizer 
-optimizer = tf.train.GradientDecentOptimizer(learning_rate = learning_rate).minimize(computed_loss)
+optimizer = tf.train.GradientDescentOptimizer(learning_rate = learning_rate).minimize(computed_loss)
 
 # Define the prediction 
 prediction_out = tf.equal(tf.argmax(output_layer,1),tf.argmax(Y,1))
@@ -106,15 +111,15 @@ with tf.Session() as sess :
 	test_accuracy = sess.run(nn_accuracy, feed_dict={X:mnist_data.test.images, Y:mnist_data.test.labels, keep_prob:1.0})
 	print("Testing accuracy is {0}".format(test_accuracy))
 
-	save_path = saver.save(sess, 'MyTrainedModel.ckpt')
-
-
+	# Save the variables to disk.
+	save_path = saver.save(sess, "/output_trained_model/tfmodel.ckpt")
+	print("Model saved in path: %s" % save_path)
 
 
 print('OK')
 
 
 
-# run the algorithme
+'''# run the algorithme
 if __name__ == '__main__':
-	print('Processing finished')
+	print('Processing finished')'''
