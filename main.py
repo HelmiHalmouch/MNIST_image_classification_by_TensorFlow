@@ -63,6 +63,23 @@ nn_layer_3 = tf.add(tf.matmul(nn_layer_2, nn_weight["W3"], nn_bias["B3"]))
 layer_drop = tf.nn.dropout(nn_layer_3, keep_prob)
 output_layer = tf.add(tf.matmul(layer_drop, nn_weight["Wout"], nn_bias["B4"]))
 
+# Define the loss 
+computed_loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(logits=output_layer, labels = Y))
+
+# Define the optimizer 
+optimizer = tf.train.GradientDecentOptimizer(learning_rate = learning_rate).minimize(computed_loss)
+
+# Define the prediction 
+prediction_out = tf.equal(tf.argmax(output_layer,1),tf.argmax(Y,1))
+
+# Define the accuracy of the model 
+nn_accuracy = tf.reduce_mean(tf.cast(prediction_out, tf.float32))
+
+# Initialize all variables 
+init= tf.global_variables_initializer()
+
+# save the model 
+saver = tf.train.Saver()
 
 print('OK')
 
