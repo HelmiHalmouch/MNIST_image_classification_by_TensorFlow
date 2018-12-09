@@ -7,4 +7,10 @@ Opencv<br/>
 Matplotlib<br/>
 
 *---------------Run------------*<br/>
+1- train the model 
+
 python main.py
+
+2- test the model on a input image 
+
+python test_model.py

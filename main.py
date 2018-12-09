@@ -7,8 +7,7 @@ Author : GHNAMI Helmi
 '''
 
 # import the required lib and package 
-import cv2
-import matplotlib.pyplot as plt
+
 import tensorflow as tf 
 import numpy as np 
 import sys, os 
@@ -31,7 +30,7 @@ n_output = 10    #output layer with 10 class (0-9 digit )
 # Define thehyperparameters fo the training using tensorflow 
 
 learning_rate = 1e-4
-epochs = 2 #3000
+epochs = 10000 #1
 batch_size = 128 
 keep_prob = tf.placeholder(tf.float32)
 
@@ -112,7 +111,7 @@ with tf.Session() as sess :
 	print("Testing accuracy is {0}".format(test_accuracy))
 
 	# Save the variables to disk.
-	save_path = saver.save(sess, "output_trained_model/tfmodel.ckpt")
+	save_path = saver.save(sess, "./output_trained_model/tfmodel.ckpt")
 	print("Model saved in path: %s" % save_path)
 
 
