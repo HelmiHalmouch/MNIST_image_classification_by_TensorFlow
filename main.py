@@ -112,7 +112,7 @@ with tf.Session() as sess :
 	print("Testing accuracy is {0}".format(test_accuracy))
 
 	# Save the variables to disk.
-	save_path = saver.save(sess, "/output_trained_model/tfmodel.ckpt")
+	save_path = saver.save(sess, "output_trained_model/tfmodel.ckpt")
 	print("Model saved in path: %s" % save_path)
 
 
